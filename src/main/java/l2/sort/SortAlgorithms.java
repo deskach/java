@@ -1,5 +1,6 @@
 package l2.sort;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 public final class SortAlgorithms {
@@ -9,7 +10,8 @@ public final class SortAlgorithms {
     }
 
     // This function mutates array
-    public static <T> void bubbleSort(T[] array, Direction sortDirection, BiFunction<T, T, Integer> predicate) {
+    public static <T> void bubbleSort(T[] items, Direction sortDirection, BiFunction<T, T, Integer> predicate) {
+        T[] array = Objects.requireNonNull(items);
         BiFunction<T, T, Integer> compare = predicate == null ? SortAlgorithms::compare : predicate;
         boolean isSwapped;
         Direction dir = sortDirection == null ? Direction.ASC : sortDirection;
