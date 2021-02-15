@@ -2,6 +2,8 @@ package payroll;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,24 +36,25 @@ class EmployeeController {
   // end::get-aggregate-root[]
 
   @PostMapping("/employees")
-  Employee newEmployee(@RequestBody Employee newEmployee) {
-    return repository.save(newEmployee);
+  ResponseEntity<?> newEmployee(@RequestBody Employee newEmployee) {
+    EntityModel<Employee> employee =  assembler.toModel(repository.save(newEmployee));
+
+    return ResponseEntity
+        .created(employee.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        .body(employee);
   }
 
   // Single item
   @GetMapping("/employees/{id}")
   EntityModel<Employee> one(@PathVariable Long id) {
-
-    Employee employee = repository.findById(id)
-        .orElseThrow(() -> new EmployeeNotFoundException(id));
+    Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
 
     return assembler.toModel(employee);
   }
 
   @PutMapping("/employees/{id}")
-  Employee replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
-
-    return repository.findById(id)
+  ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
+    Employee empl = repository.findById(id)
         .map(employee -> {
           employee.setName(newEmployee.getName());
           employee.setRole(newEmployee.getRole());
@@ -61,10 +64,17 @@ class EmployeeController {
           newEmployee.setId(id);
           return repository.save(newEmployee);
         });
+    EntityModel<?> emplModel = assembler.toModel(empl);
+
+    return ResponseEntity
+        .created(emplModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        .body(emplModel);
   }
 
   @DeleteMapping("/employees/{id}")
-  void deleteEmployee(@PathVariable Long id) {
+  ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
     repository.deleteById(id);
+
+    return ResponseEntity.noContent().build();
   }
 }
