@@ -2,7 +2,7 @@ package arrays.remove.element;
 
 import java.util.Arrays;
 
-/* Remove Duplicates from Sorted Array */
+/* Remove Element */
 public class Solution {
   public int removeElement(int[] nums, int val) {
     int pos = 0, size = nums.length;
