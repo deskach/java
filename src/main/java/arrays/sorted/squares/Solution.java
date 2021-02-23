@@ -4,13 +4,7 @@ import java.util.Arrays;
 
 class Solution {
   public int[] sortedSquares(int[] nums) {
-    int result[] = Arrays.copyOf(nums, nums.length);
-
-    for (int i = 0; i < result.length; i++) {
-      result[i] *= result[i];
-    }
-
-    return Arrays.stream(result).sorted().toArray();
+    return Arrays.stream(nums).map(e -> e*e).sorted().toArray();
   }
 }
 
